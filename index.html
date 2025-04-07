@@ -1,20 +1,30 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-Book Store Website</title>
+    <link
+      rel="shortcut icon"
+      href="img/title-book-image.png"
+      type="image/x-icon"
+    />
+  </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мем</title>
-    <link rel="shortcut icon" href="https://placekitten.com/96/139" type="image/x-icon">
-    <script src="https://unpkg.com/htmx.org@1.9.10"
-        integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
-        crossorigin="anonymous"></script>
-</head>
-
-<body>
-    <H1>Мем</H1>
-    <img src="img/mem-1.jpg" alt="Мем">
-</body>
-
+  <body>
+    <header></header>
+    <main>
+      <!--Vitalii Yatsura-->
+      <section>
+        <div
+          data-hx-trigger="load"
+          data-hx-swap="outerHTML"
+          data-hx-get="index.featured-author.html"
+        ></div>
+      </section>
+      <!--End Vitalii Yatsura-->
+    </main>
+    <footer></footer>
+  </body>
 </html>
