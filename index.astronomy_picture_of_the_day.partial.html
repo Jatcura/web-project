@@ -1,14 +1,13 @@
 <!-- index.astronomy_picture_of_the_day.partial.html -->
 <div class="apod-container">
-  <div class="controls">
-    <label for="date-input">Select Date:</label>
-    <input type="date" id="date-input" />
-    <button id="fetch-btn">Show Image</button>
+  <div>
+    <h1>Astronomy Picture of the Day: <input type="date" id="date-input" /></h1>
   </div>
+  <div class="controls"></div>
   <div class="apod-display">
     <img id="apod-img" src="" alt="APOD Image" />
     <div class="apod-info">
-      <h2 id="apod-title"></h2>
+      <h3 id="apod-title"></h3>
       <p id="apod-desc"></p>
     </div>
   </div>
