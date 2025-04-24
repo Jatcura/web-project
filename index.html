@@ -4,12 +4,14 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>E-Book Store Website</title>
-    <link
-      rel="shortcut icon"
-      href="img/title-book-image.png"
-      type="image/x-icon"
-    />
+    <title>NASA APOD Viewer</title>
+    <link rel="shortcut icon" href="img/icon.png" type="image/x-icon" />
+
+    <!-- Головні стилі + APOD-тема -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/apod.css" />
+
+    <!-- HTMX -->
     <script
       src="https://unpkg.com/htmx.org@1.9.10"
       integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
@@ -20,16 +22,18 @@
   <body>
     <header></header>
     <main>
-      <!--Vitalii Yatsura-->
       <section>
+        <!-- HTMX підхоплює цей partial при load -->
         <div
           data-hx-trigger="load"
           data-hx-swap="outerHTML"
-          data-hx-get="index.featured-author.partial.html"
+          data-hx-get="index.astronomy_picture_of_the_day.partial.html"
         ></div>
       </section>
-      <!--End Vitalii Yatsura-->
     </main>
     <footer></footer>
+
+    <!-- Скрипт APOD (деферить до моменту, коли DOM готовий) -->
+    <script src="js/apod.js" defer></script>
   </body>
 </html>

@@ -1,0 +1,52 @@
+/* css/apod.css */
+:root {
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --ctrl-bg: #222222;
+  --ctrl-border: #444444;
+}
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+.apod-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+.controls {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.controls input[type="date"],
+.controls button {
+  background-color: var(--ctrl-bg);
+  color: var(--text-color);
+  border: 1px solid var(--ctrl-border);
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+.controls button:hover {
+  background-color: var(--ctrl-border);
+}
+.apod-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.apod-display img {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--ctrl-border);
+}
+.apod-info {
+  flex: 1;
+}
+.apod-info h2 {
+  margin-top: 0;
+}
+.apod-info p {
+  line-height: 1.5;
+}
