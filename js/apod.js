@@ -4,16 +4,16 @@ function setupAPOD() {
   if (!apiKey) apiKey = 'DEMO_KEY';
 
   const dateInput = document.getElementById('date-input');
-  const beforeEl  = document.getElementById('apod-img-before');
-  const currEl    = document.getElementById('apod-img');
-  const nextEl    = document.getElementById('apod-img-next');
-  const titleEl   = document.getElementById('apod-title');
-  const descEl    = document.getElementById('apod-desc');
+  const beforeEl = document.getElementById('apod-img-before');
+  const currEl = document.getElementById('apod-img');
+  const nextEl = document.getElementById('apod-img-next');
+  const titleEl = document.getElementById('apod-title');
+  const descEl = document.getElementById('apod-desc');
   if (!dateInput) return;
 
-  const fmt      = d => d.toISOString().split('T')[0];
+  const fmt = d => d.toISOString().split('T')[0];
   const todayStr = fmt(new Date());
-  dateInput.max  = todayStr;
+  dateInput.max = todayStr;
 
   const FALLBACK_COUNT = 10;
   function getRandomFallback() {
@@ -24,8 +24,8 @@ function setupAPOD() {
   async function fetchAPODSingle(date) {
     const url = new URL('https://api.nasa.gov/planetary/apod');
     url.searchParams.set('api_key', apiKey);
-    url.searchParams.set('date',     date);
-    url.searchParams.set('thumbs',   'true');
+    url.searchParams.set('date', date);
+    url.searchParams.set('thumbs', 'true');
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
@@ -33,10 +33,10 @@ function setupAPOD() {
 
   async function fetchAPODRange(start, end) {
     const url = new URL('https://api.nasa.gov/planetary/apod');
-    url.searchParams.set('api_key',    apiKey);
+    url.searchParams.set('api_key', apiKey);
     url.searchParams.set('start_date', start);
-    url.searchParams.set('end_date',   end);
-    url.searchParams.set('thumbs',     'true');
+    url.searchParams.set('end_date', end);
+    url.searchParams.set('thumbs', 'true');
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
@@ -54,7 +54,7 @@ function setupAPOD() {
     } else {
       el.src = data.url;
     }
-    el.alt           = data.title;
+    el.alt = data.title;
     el.style.display = '';
   }
 
@@ -72,7 +72,7 @@ function setupAPOD() {
     setImg(currEl, dataCurr);
 
     // дві випадкові дати
-    const nowMs   = Date.now();
+    const nowMs = Date.now();
     const startMs = new Date().setFullYear(new Date().getFullYear() - 5);
     function randDateStr() {
       return fmt(new Date(startMs + Math.random() * (nowMs - startMs)));
@@ -85,20 +85,20 @@ function setupAPOD() {
     const dataNext = await fetchAPODSingle(d2).catch(() => null);
 
     setImg(beforeEl, dataPrev);
-    setImg(nextEl,   dataNext);
+    setImg(nextEl, dataNext);
 
     // текст
     if (dataCurr) {
       titleEl.textContent = dataCurr.title;
-      descEl.textContent  = dataCurr.explanation;
+      descEl.textContent = dataCurr.explanation;
     } else {
       titleEl.textContent = 'No data';
-      descEl.textContent  = '';
+      descEl.textContent = '';
     }
 
     // кліки
     beforeEl.style.cursor = 'pointer';
-    nextEl.style.cursor   = 'pointer';
+    nextEl.style.cursor = 'pointer';
     beforeEl.onclick = () => {
       dateInput.value = dataPrev?.date || todayStr;
       updateAPOD();
@@ -117,13 +117,13 @@ function setupAPOD() {
       const nextDate = new Date(currDate); nextDate.setDate(currDate.getDate() + 1);
 
       titleEl.textContent = 'Завантаження…';
-      descEl.textContent  = '';
+      descEl.textContent = '';
       [beforeEl, currEl, nextEl].forEach(img => (img.style.display = 'none'));
 
       const start = fmt(prevDate);
-      const end   = nextDate > new Date(todayStr) ? todayStr : fmt(nextDate);
-      const arr   = await fetchAPODRange(start, end);
-      const dp    = arr[0], dc = arr[1], dn = arr[2];
+      const end = nextDate > new Date(todayStr) ? todayStr : fmt(nextDate);
+      const arr = await fetchAPODRange(start, end);
+      const dp = arr[0], dc = arr[1], dn = arr[2];
 
       let dataNext = dn;
       if (!dataNext) {
@@ -132,14 +132,14 @@ function setupAPOD() {
       }
 
       setImg(beforeEl, dp);
-      setImg(currEl,   dc);
-      setImg(nextEl,   dataNext);
+      setImg(currEl, dc);
+      setImg(nextEl, dataNext);
 
       titleEl.textContent = dc.title;
-      descEl.textContent  = dc.explanation;
+      descEl.textContent = dc.explanation;
 
       beforeEl.style.cursor = 'pointer';
-      nextEl.style.cursor   = 'pointer';
+      nextEl.style.cursor = 'pointer';
       beforeEl.onclick = () => {
         dateInput.value = fmt(prevDate);
         updateAPOD();
@@ -151,10 +151,10 @@ function setupAPOD() {
     } catch (err) {
       console.error("updateAPOD error:", err);
       setImg(beforeEl, null);
-      setImg(currEl,   null);
-      setImg(nextEl,   null);
+      setImg(currEl, null);
+      setImg(nextEl, null);
       titleEl.textContent = 'Error';
-      descEl.textContent  = err.message;
+      descEl.textContent = err.message;
     }
   }
 
