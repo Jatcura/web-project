@@ -1,26 +1,35 @@
 // js/apod.js
+
 function setupAPOD() {
+  // 1) Отримуємо API Key
   let apiKey = localStorage.getItem('nasa_api_key');
   if (!apiKey) apiKey = 'DEMO_KEY';
 
+  // 2) DOM-елементи
   const dateInput = document.getElementById('date-input');
-  const beforeEl = document.getElementById('apod-img-before');
-  const currEl = document.getElementById('apod-img');
-  const nextEl = document.getElementById('apod-img-next');
-  const titleEl = document.getElementById('apod-title');
-  const descEl = document.getElementById('apod-desc');
-  if (!dateInput) return;
+  const beforeEl  = document.getElementById('apod-img-before');
+  const currEl    = document.getElementById('apod-img');
+  const nextEl    = document.getElementById('apod-img-next');
+  const titleEl   = document.getElementById('apod-title');
+  const descEl    = document.getElementById('apod-desc');
+  if (!dateInput) return;  // нічого не робимо, якщо немає input
 
+  // 3) Форматер дати та today max
   const fmt = d => d.toISOString().split('T')[0];
   const todayStr = fmt(new Date());
   dateInput.max = todayStr;
 
+  // 4) Підготовка fallback
   const FALLBACK_COUNT = 10;
+  const nowMs   = Date.now();
+  const startMs = new Date(new Date().setFullYear(new Date().getFullYear() - 5)).getTime();
+
   function getRandomFallback() {
     const idx = Math.floor(Math.random() * FALLBACK_COUNT);
-    return `img/fallback/${idx}.jpg`;
+    return `img/fallback/${idx}.jpg`;  // або просто `fallback/${idx}.jpg` в залежності від твоєї структури
   }
 
+  // 5) Функції для запитів до NASA APOD API
   async function fetchAPODSingle(date) {
     const url = new URL('https://api.nasa.gov/planetary/apod');
     url.searchParams.set('api_key', apiKey);
@@ -42,6 +51,7 @@ function setupAPOD() {
     return res.json();
   }
 
+  // 6) Встановлення зображення (з fallback)
   function setImg(el, data) {
     if (!data || (!data.url && !data.thumbnail_url)) {
       el.src = getRandomFallback();
@@ -58,9 +68,8 @@ function setupAPOD() {
     el.style.display = '';
   }
 
-  // === Виправлений initStartup ===
+  // 7) Початкове завантаження (today + дві випадкові дати)
   async function initStartup() {
-    // чистимо
     [beforeEl, currEl, nextEl].forEach(el => {
       el.style.display = 'none';
       el.src = '';
@@ -71,9 +80,7 @@ function setupAPOD() {
     const dataCurr = await fetchAPODSingle(todayStr).catch(() => null);
     setImg(currEl, dataCurr);
 
-    // дві випадкові дати
-    const nowMs = Date.now();
-    const startMs = new Date().setFullYear(new Date().getFullYear() - 5);
+    // дві випадкові дати за останні 5 років
     function randDateStr() {
       return fmt(new Date(startMs + Math.random() * (nowMs - startMs)));
     }
@@ -87,18 +94,18 @@ function setupAPOD() {
     setImg(beforeEl, dataPrev);
     setImg(nextEl, dataNext);
 
-    // текст
+    // текст під картинкою
     if (dataCurr) {
       titleEl.textContent = dataCurr.title;
       descEl.textContent = dataCurr.explanation;
     } else {
       titleEl.textContent = 'No data';
-      descEl.textContent = '';
+      descEl.textContent  = '';
     }
 
-    // кліки
+    // клікабельність
     beforeEl.style.cursor = 'pointer';
-    nextEl.style.cursor = 'pointer';
+    nextEl.style.cursor   = 'pointer';
     beforeEl.onclick = () => {
       dateInput.value = dataPrev?.date || todayStr;
       updateAPOD();
@@ -109,7 +116,7 @@ function setupAPOD() {
     };
   }
 
-  // === updateAPOD без змін ===
+  // 8) Оновлення за обраною датою
   async function updateAPOD() {
     try {
       const currDate = new Date(dateInput.value);
@@ -117,13 +124,13 @@ function setupAPOD() {
       const nextDate = new Date(currDate); nextDate.setDate(currDate.getDate() + 1);
 
       titleEl.textContent = 'Завантаження…';
-      descEl.textContent = '';
-      [beforeEl, currEl, nextEl].forEach(img => (img.style.display = 'none'));
+      descEl.textContent  = '';
+      [beforeEl, currEl, nextEl].forEach(img => img.style.display = 'none');
 
       const start = fmt(prevDate);
-      const end = nextDate > new Date(todayStr) ? todayStr : fmt(nextDate);
-      const arr = await fetchAPODRange(start, end);
-      const dp = arr[0], dc = arr[1], dn = arr[2];
+      const end   = nextDate > new Date(todayStr) ? todayStr : fmt(nextDate);
+      const arr   = await fetchAPODRange(start, end);
+      const dp    = arr[0], dc = arr[1], dn = arr[2];
 
       let dataNext = dn;
       if (!dataNext) {
@@ -136,10 +143,10 @@ function setupAPOD() {
       setImg(nextEl, dataNext);
 
       titleEl.textContent = dc.title;
-      descEl.textContent = dc.explanation;
+      descEl.textContent  = dc.explanation;
 
       beforeEl.style.cursor = 'pointer';
-      nextEl.style.cursor = 'pointer';
+      nextEl.style.cursor   = 'pointer';
       beforeEl.onclick = () => {
         dateInput.value = fmt(prevDate);
         updateAPOD();
@@ -149,6 +156,7 @@ function setupAPOD() {
         updateAPOD();
       };
     } catch (err) {
+      /* eslint-disable-next-line no-console */
       console.error("updateAPOD error:", err);
       setImg(beforeEl, null);
       setImg(currEl, null);
@@ -158,9 +166,11 @@ function setupAPOD() {
     }
   }
 
+  // 9) Слухаємо зміну дати і запускаємо стартовий лоад
   dateInput.addEventListener('change', updateAPOD);
   initStartup();
 }
 
+// Коли сторінка завантажиться або після HTMX swap — налаштовуємо APOD
 document.addEventListener('DOMContentLoaded', setupAPOD);
 document.body.addEventListener('htmx:afterSwap', setupAPOD);
